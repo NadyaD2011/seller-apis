@@ -11,6 +11,30 @@ logger = logging.getLogger(__file__)
 
 
 def get_product_list(page, campaign_id, access_token):
+    """
+    Получить список товаров компании на Яндекс.Маркет.
+
+    Attributes:
+        page (str): Идентификатор страницы выдачи API, которую нужно открыть.
+        campaign_id (str): Идентификатор магазина для API Yandex.Market.
+        access_token (str): Токен доступа к API для Yandex.Market.
+
+    Returns:
+        dict: Часть ответа API, содержащая список товаров.
+
+    Raises:
+        requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
+        во время запроса.
+
+    Примеры:
+        >>> get_product_list("page123", "campaign123", "access_token123")
+        [{'item': 'product123', 'price': 100.0},
+        {'item': 'product124', 'price': 150.0}]
+
+        >>> get_product_list(123, "campaign123", "access_token123")
+        TypeError: expected string or bytes-like object
+    """
+
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -30,6 +54,29 @@ def get_product_list(page, campaign_id, access_token):
 
 
 def update_stocks(stocks, campaign_id, access_token):
+    """
+    Обновить информацию об остатках товаров на Яндекс.Маркет.
+
+    Attributes:
+        stocks (list): Список товаров с обновлёнными данными.
+        campaign_id (str): Идентификатор магазина для API Yandex.Market.
+        access_token (str): Токен доступа к API для Yandex.Market.
+
+    Returns:
+        dict: Ответ API
+
+    Raises:
+        requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
+        во время запроса.
+
+    Examples:
+        >>> update_stocks([{"stock": 5, "item_id": "123"}],
+        >>>               "campaign123", "access_token123")
+        {'result': 'success'}
+
+        >>> update_stocks("5", "campaign123", "access_token123")
+        TypeError: expected list
+    """
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -46,6 +93,30 @@ def update_stocks(stocks, campaign_id, access_token):
 
 
 def update_price(prices, campaign_id, access_token):
+    """
+    Обновить цены на товары на Яндекс.Маркет.
+
+    Attributes:
+        prices (list): Список товаров с обновлёнными данными.
+        campaign_id (str): Идентификатор магазина для API Yandex.Market.
+        access_token (str): Токен доступа к API для Yandex.Market.
+
+    Returns:
+        dict: Ответ API
+
+    Raises:
+        requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
+        во время запроса.
+
+    Примеры:
+        >>> update_price([{"price": "5990", "item_id": "123"}],
+        >>>              "campaign123", "access_token123")
+        {'result': 'success'}
+
+        >>> update_price("5990", "campaign123", "access_token123")
+        TypeError: expected list
+    """
+
     endpoint_url = "https://api.partner.market.yandex.ru/"
     headers = {
         "Content-Type": "application/json",
@@ -62,7 +133,28 @@ def update_price(prices, campaign_id, access_token):
 
 
 def get_offer_ids(campaign_id, market_token):
-    """Получить артикулы товаров Яндекс маркета"""
+    """
+    Получить артикулы товаров на Яндекс.Маркете.
+
+    Attributes:
+        campaign_id (str): Идентификатор магазина для API Yandex.Market.
+        market_token (str): Токен доступа к API для Yandex.Market.
+
+    Returns:
+        list: Список артикулов товаров нашего магазина.
+
+    Raises:
+        requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
+        во время запроса.
+
+    Примеры:
+        >>> get_offer_ids("campaign123", "market_token123")
+        ['offer123', 'offer124']
+
+        >>> get_offer_ids("campaign123", 123)
+        TypeError: expected string or bytes-like object
+    """
+
     page = ""
     product_list = []
     while True:
@@ -78,9 +170,33 @@ def get_offer_ids(campaign_id, market_token):
 
 
 def create_stocks(watch_remnants, offer_ids, warehouse_id):
+    """
+    Создать список информации об остатках товаров на Яндекс.Маркете.
+
+    Arguments:
+        watch_remnants (list): Список словарей с данными о товарах.
+        offer_ids (list): Список имеющихся в магазине товаров.
+        warehouse_id (str): Идентификатор склада для API Yandex.Market
+
+    Returns:
+        list: Список обновлённых данных о товарах для магазина Yandex.Market.
+
+    Примеры:
+        >>> create_stocks([{"Код": "123", "Количество": ">10"}],
+        >>>               ["123"], "warehouse123")
+        [
+            {'offer_id': '123', 'stock': 100}
+        ]
+
+        >>> create_stocks([{"Код": "123", "Количество": ">10"}],
+        >>                "invalid", "warehouse123")
+        TypeError: expected list
+    """
+
     # Уберем то, что не загружено в market
     stocks = list()
-    date = str(datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z")
+    date = str(
+        datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z")
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
             count = str(watch.get("Количество"))
@@ -123,6 +239,26 @@ def create_stocks(watch_remnants, offer_ids, warehouse_id):
 
 
 def create_prices(watch_remnants, offer_ids):
+    """
+    Создать список цен на товары на Яндекс.Маркете.
+
+    Arguments:
+        watch_remnants (list): Список словарей с данными о товарах.
+        offer_ids (list): Список имеющихся в магазине товаров.
+
+    Returns:
+        list: Список товаров с обновлёнными ценами.
+
+    Примеры:
+        >>> create_prices([{"Код": "123", "Цена": "5'990.00 руб."}], ["123"])
+        [{
+            'auto_action_enabled': 'UNKNOWN', 'currency_code': 'RUB',
+            'offer_id': '123', 'old_price': '0', 'price': '5990'
+        }]
+
+        >>> create_prices([{"Код": "123", "Цена": "5'990.00 руб."}], "invalid")
+        TypeError: expected list
+    """
     prices = []
     for watch in watch_remnants:
         if str(watch.get("Код")) in offer_ids:
@@ -143,6 +279,34 @@ def create_prices(watch_remnants, offer_ids):
 
 
 async def upload_prices(watch_remnants, campaign_id, market_token):
+    """
+    Загрузить цены на товары на Яндекс.Маркет.
+
+    Arguments:
+        watch_remnants (list): Список словарей с данными о товарах.
+        campaign_id (str): Идентификатор клиента, сгенерированный для доступа к API Yandex.Market.
+        market_token (str): Токен, сгенерированный для доступа к API Yandex.Market.
+
+    Returns:
+        list: Цены, которые были загружены.
+
+    Raises:
+        requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
+        во время запроса.
+
+    Examples:
+        >>> upload_prices([{"Код": "123", "Цена": "5'990.00 руб."}],
+                          "campaign123", "market_token123")
+        [{
+            'auto_action_enabled': 'UNKNOWN', 'currency_code': 'RUB',
+            'offer_id': '123', 'old_price': '0', 'price': '5990'
+        }]
+
+        >>> await upload_prices([{"Код": "123", "Price": "5'990.00 руб."}],
+                                123, 456)
+        # Вы можете увидеть ошибку BadRequest в терминале.
+
+    """
     offer_ids = get_offer_ids(campaign_id, market_token)
     prices = create_prices(watch_remnants, offer_ids)
     for some_prices in list(divide(prices, 500)):
@@ -150,7 +314,34 @@ async def upload_prices(watch_remnants, campaign_id, market_token):
     return prices
 
 
-async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id):
+async def upload_stocks(
+        watch_remnants, campaign_id, market_token, warehouse_id):
+    """
+    Загрузить информацию об остатках товаров на Яндекс.Маркет.
+
+    Arguments:
+        watch_remnants (list): Список словарей с данными о товарах.
+        campaign_id (str): Идентификатор клиента, сгенерированный для доступа к API Yandex.Market.
+        market_token (str): Токен, сгенерированный для доступа к API Yandex.Market.
+        warehouse_id (str): Идентификатор склада для API Yandex.Market.
+
+    Returns:
+        list: Список товаров, которые ещё остались в продаже.
+        list: Список данных о товарах, которые были обновлены.
+
+    Examples:
+        >>> upload_stocks([{"Код": "123", "Количество": "5"}], "campaign123",
+        >>>     "market_token123", "warehouse123")
+        ([
+            {'offer_id': '123', 'stock': 5}
+        ], [
+            {'offer_id': '123', 'stock': 5}
+        ])
+
+        >>> upload_stocks([{"Code": "123", "Stock": "5"}], 123, 456,
+        >>>     "warehouse123")
+        # Вы можете увидеть ошибку BadRequest в терминале.
+    """
     offer_ids = get_offer_ids(campaign_id, market_token)
     stocks = create_stocks(watch_remnants, offer_ids, warehouse_id)
     for some_stock in list(divide(stocks, 2000)):
@@ -162,6 +353,13 @@ async def upload_stocks(watch_remnants, campaign_id, market_token, warehouse_id)
 
 
 def main():
+    """
+    Загружает информацию о товарах с сайта Casio и обновляет данные товаров для магазинов FBS и DBS в Yandex.Market
+
+    Raises:
+        requests.exceptions.ReadTimeout
+        requests.exceptions.ConnectionError
+    """
     env = Env()
     market_token = env.str("MARKET_TOKEN")
     campaign_fbs_id = env.str("FBS_ID")
