@@ -181,7 +181,7 @@ def download_stock():
         {'item': 'watch124', 'quantity': 30}]
 
         >>> download_stock("https://invalidurl.com")
-        # Вы можете увидеть ошибку BadRequest в терминале.
+        Вы можете увидеть ошибку BadRequest в терминале.
     """
 
     # Скачать остатки с сайта
