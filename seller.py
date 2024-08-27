@@ -15,14 +15,14 @@ def get_product_list(last_id, client_id, seller_token):
     """
     Получить список товаров магазина Озон.
 
-    Args:
-        last_id (str): Идентификатор последнего полученного товара.
-        client_id (str): Идентификатор клиента.
-        seller_token (str): Токен продавца.
+    Arguments:
+        last_id (str): Идентификатор последнего товара, полученного в ответе API Ozon.
+        client_id (str): Идентификатор клиента, сгенерированный для доступа к API Ozon.
+        seller_token (str): Токен, сгенерированный для доступа к API Ozon.
 
     Returns:
-        list: Список товаров.
-
+        dict: Содержимое ответа API со списком товаров.
+    
     Raises:
         requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
         во время запроса.
@@ -60,12 +60,12 @@ def get_offer_ids(client_id, seller_token):
     """
     Получить артикулы товаров магазина Озон.
 
-    Args:
+    Arguments:
         client_id (str): Идентификатор клиента, сгенерированный для доступа к API Ozon.
         seller_token (str): Токен, сгенерированный для доступа к API Ozon.
 
     Returns:
-        list: Список артикулов товаров.
+        list: Список артикулов товаров нашего магазина в Ozon.
 
     Raises:
         requests.exceptions.HTTPError: В случае возникновения HTTP-ошибки
@@ -98,7 +98,7 @@ def update_price(prices: list, client_id, seller_token):
     """
     Обновить цены товаров.
 
-    Args:
+    Arguments:
         prices (list): Список словарей, содержащих данные об артикуле и его цене.
         client_id (str): Идентификатор клиента, сгенерированный для доступа к API Ozon.
         seller_token (str): Токен, сгенерированный для доступа к API Ozon.
